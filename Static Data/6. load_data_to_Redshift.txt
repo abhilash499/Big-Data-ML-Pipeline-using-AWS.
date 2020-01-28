@@ -1,0 +1,18 @@
+
+CREATE SCHEMA freddie;
+
+CREATE TABLE freddie.performance_processed
+(ID_loan  CHAR(12), Period DATE, Act_endg_upb DECIMAL(10,2), delq_sts CHAR(3), loan_age SMALLINT, mths_remng SMALLINT,
+repch_flag CHAR(1), flag_mod CHAR(1), CD_Zero_BAL SMALLINT, Dt_zero_BAL DATE, New_Int_rt DECIMAL(8,2), Amt_Non_Int_Brng_Upb INT,
+Dt_Lst_Pi  DATE, MI_Recoveries DECIMAL(10,2), Net_Sale_Proceeds  CHAR(14), Non_MI_Recoveries DECIMAL(10,2), Expenses DECIMAL(10,2),
+legal_costs DECIMAL(10,2), maint_pres_costs DECIMAL(10,2), taxes_ins_costs DECIMAL(10,2), misc_costs DECIMAL(10,2),
+actual_loss DECIMAL(10,2), modcost DECIMAL(10,2), stepmod_ind CHAR(1), dpm_ind CHAR(1), eltv DECIMAL(4,2));
+
+COPY freddie.performance_processed 
+from 's3://abcdefghijklmnop-processed/performance/'
+credentials 'aws_access_key_id=ABCDEFGHIJKLMNOPQRSTUVWXYZ;aws_secret_access_key=abcdefghijklmnopqrstuvwxyz'
+maxerror 500
+delimiter '|';
+
+DROP TABLE freddie.performance_processed;
+DROP SCHEMA freddie;

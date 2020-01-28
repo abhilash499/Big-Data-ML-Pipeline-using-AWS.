@@ -1,0 +1,6 @@
+aws s3 mv C:/Users/Abhilash/Desktop/HistoricalInputFiles/ s3://freddie-mac-1999-2017-raw/performance/ --recursive --exclude "*" --include "historical_data1_time_*.txt"
+
+aws s3 mv /C/Users/Abhilash/Desktop/HistoricalInputFiles/ s3://freddie-mac-1999-2017-raw/aquisition/ --recursive --exclude "*" --include "*.txt"
+
+
+

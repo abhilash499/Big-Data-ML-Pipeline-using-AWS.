@@ -1,0 +1,34 @@
+
+**************************Create database and table in MySQL RDS *******************************************************************************************
+
+CREATE DATABASE freddie;
+
+CREATE TABLE freddie.aquisition_processed_sql
+(fico SMALLINT, dt_first_pi DATE, flag_fthb CHAR(1), dt_matr DATE, cd_msa INT, mi_pct SMALLINT, cnt_units TINYINT,
+occpy_sts CHAR(1), cltv INT, dti SMALLINT, orig_upb DECIMAL(10,2), ltv SMALLINT, int_rt DECIMAL(6,2), channel CHAR(1),
+ppmt_pnlty CHAR(1), prod_type CHAR(5), st CHAR(2), prop_type CHAR(2), zipcode CHAR(5), id_loan CHAR(12), loan_purpose  CHAR(1),
+orig_loan_term SMALLINT, cnt_borr TINYINT, seller_name CHAR(20), servicer_name CHAR(20), flag_sc CHAR(1), pre_harp CHAR(12));
+
+************************Modify S3 data by creating internal table in hive ********************************************************************************** 
+
+The data present in S3 was not in right format. '/n' was both present as line delimiter and in some of the fields.
+Hence created an Hive internal table with correct format and loaded data into it.
+
+CREATE TABLE freddie.aquisition_processed_sql
+(fico SMALLINT, dt_first_pi DATE, flag_fthb CHAR(1), dt_matr DATE, cd_msa INT, mi_pct SMALLINT, cnt_units TINYINT,
+occpy_sts CHAR(1), cltv INT, dti SMALLINT, orig_upb DECIMAL(10,2), ltv SMALLINT, int_rt DECIMAL(6,2), channel CHAR(1),
+ppmt_pnlty CHAR(1), prod_type CHAR(5), st CHAR(2), prop_type CHAR(2), zipcode CHAR(5), id_loan CHAR(12), loan_purpose  CHAR(1),
+orig_loan_term SMALLINT, cnt_borr TINYINT, seller_name CHAR(20), servicer_name CHAR(20), flag_sc CHAR(1), pre_harp CHAR(12))
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '|'
+LINES TERMINATED BY '\n'
+TBLPROPERTIES('serialization.null.format' = '');
+
+INSERT INTO freddie.aquisition_processed_sql
+SELECT * FROM freddie.aquisition_processed;
+
+
+************************* Export data to mysql from EMR Linux CLI ******************************************************************************************
+
+sqoop export --verbose --connect jdbc:mysql://database-abcdef.cyuudlvfrjjf.us-east-1.rds.amazonaws.com/freddie --username admin -password 12345 --table aquisition_processed --input-fields-terminated-by '|' --input-lines-terminated-by '\n' --export-dir /user/hive/warehouse/freddie.db/aquisition_processed_sql/ --driver com.mysql.jdbc.Driver
+
+************************************************************************************************************************************************************
