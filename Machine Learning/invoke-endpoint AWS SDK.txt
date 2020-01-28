@@ -1,0 +1,5 @@
+
+
+$ aws sagemaker-runtime invoke-endpoint --endpoint-name Image-Classifier-Endpoint --body fileb://C:/Users/Abhilash/Desktop/test.png  ./Desktop/output.json
+
+$ cat ./Desktop/output.json
