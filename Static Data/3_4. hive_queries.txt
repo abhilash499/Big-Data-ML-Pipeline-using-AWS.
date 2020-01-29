@@ -25,6 +25,19 @@ occpy_sts, cltv, dti, orig_upb, ltv, int_rt, channel, ppmt_pnlty, prod_type, st,
 orig_loan_term, cnt_borr, seller_name, servicer_name, flag_sc, pre_harp
 from freddie.aquisition_raw;
 
+CREATE EXTERNAL TABLE freddie.aquisition_processed_part
+(fico SMALLINT, dt_first_pi DATE, flag_fthb CHAR(1), dt_matr DATE, cd_msa INT, mi_pct SMALLINT, cnt_units TINYINT,
+occpy_sts CHAR(1), cltv INT, dti SMALLINT, orig_upb DECIMAL(10,2), ltv SMALLINT, int_rt DECIMAL(6,2), channel CHAR(1),
+ppmt_pnlty CHAR(1), prod_type CHAR(5), st CHAR(2), prop_type CHAR(2), zipcode CHAR(5), id_loan CHAR(12), loan_purpose  CHAR(1),
+orig_loan_term SMALLINT, cnt_borr TINYINT, seller_name CHAR(20), servicer_name CHAR(20), flag_sc CHAR(1), pre_harp CHAR(12))
+PARTITIONED BY (period_year INT)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '|'
+LOCATION 's3://freddie-mac-1999-2017-processed/aquisition-yearly/';
+
+INSERT INTO TABLE freddie.aquisition_processed_part
+PARTITION(period_year)
+select *, year(dt_first_pi) as period_year FROM freddie.aquisition_processed;
+
 CREATE EXTERNAL TABLE freddie.performance_raw
 (ID_loan  CHAR(12), Period CHAR(6), Act_endg_upb DECIMAL(10,2), delq_sts CHAR(3), loan_age SMALLINT, mths_remng SMALLINT,
 repch_flag CHAR(1), flag_mod CHAR(1), CD_Zero_BAL TINYINT, Dt_zero_BAL CHAR(6), New_Int_rt DECIMAL(8,2), Amt_Non_Int_Brng_Upb INT,
